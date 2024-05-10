@@ -1,0 +1,10 @@
+PROBLEM STATEMENT 
+TheproposedAccidentSafetyappaims tobeacomprehensiveand
+immediatesolutiontomosttrafficaccidents.Ituses in-builtphone
+sensors todeterminetheoccurrenceofanyaccidents inthe
+background,andprovidesanSOSalerttoeverynearbyuser.Then, it
+providesany firstresponderswithanAR-basedguidetotreatany
+injuriesdetectedviascan,withinteractivevoice-baseddirections.In
+brief, itutilizes variouscutting-edgetechnologies tohandleany
+accidentsefficientlyandineverypossiblewayandreduceall
+casualtiesanddamages.
