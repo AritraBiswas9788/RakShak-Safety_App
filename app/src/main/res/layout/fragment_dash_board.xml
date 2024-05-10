@@ -64,7 +64,7 @@
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/materialCardView"
             android:layout_width="140dp"
-            android:layout_height="210dp"
+            android:layout_height="150dp"
             android:layout_marginStart="20dp"
             android:layout_marginTop="35dp"
             app:cardBackgroundColor="#bfffff"
@@ -106,27 +106,71 @@
             android:layout_height="95dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:layout_marginBottom="100dp"
             android:src="@drawable/accidenttext"
             app:layout_constraintBottom_toBottomOf="@+id/materialCardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/materialCardView"
             app:layout_constraintTop_toTopOf="@+id/materialCardView" />
 
+
+
         <TextView
+            android:id="@+id/textView4"
+            android:layout_height="45dp"
             android:layout_width="0dp"
+            android:layout_marginTop="40dp"
+            android:background="#009999"
+
+            android:fontFamily="@font/comfortaa_bold"
+            android:paddingLeft="25dp"
+            android:text="      TRACK YOUR CLOSE ONES"
+            android:textColor="@color/white"
+            android:textSize="20dp"
+            android:gravity="center_vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/materialCardView"  />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/trackList"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="55dp"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/map"
+            app:layout_constraintBottom_toBottomOf="@+id/textView4"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textView4" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/addPerson"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
+            android:drawableStart="@drawable/contacts"
+            android:drawablePadding="12dp"
+            android:layout_gravity="bottom"
             android:layout_marginStart="20dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="20dp"
-            android:fontFamily="@font/big_shoulders_display_thin"
-            android:text="Revolutionary Service that utilizes the Phone's in-built sensors - accelerometer and GPS - to accurately detect accidents. On accident detection, automatically launches SOS signal."
-            android:textSize="13sp"
+            android:background="@color/teal"
+            android:text="ADD PERSON"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/materialCardView"
-            app:layout_constraintTop_toBottomOf="@+id/dwdwd" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/trackList" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

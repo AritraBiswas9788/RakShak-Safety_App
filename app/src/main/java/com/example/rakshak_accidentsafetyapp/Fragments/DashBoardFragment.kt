@@ -4,14 +4,17 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.AppCompatButton
+import androidx.fragment.app.Fragment
 import com.example.rakshak_accidentsafetyapp.R
 import com.google.android.material.switchmaterial.SwitchMaterial
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -27,7 +30,8 @@ class DashBoardFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
-    private lateinit var toggleService:SwitchMaterial
+    private lateinit var toggleService: SwitchMaterial
+    private lateinit var addPersonButton: AppCompatButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +53,46 @@ class DashBoardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         toggleService = view.findViewById<SwitchMaterial>(R.id.toggleService)
+        addPersonButton = view.findViewById(R.id.addPerson)
+        addPersonButton.setOnClickListener {
+            addPersonDialog()
+        }
         toggleService.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked)
-            {
+            if (isChecked) {
                 enableService()
             }
         }
+    }
+
+    private fun addPersonDialog() {
+        val builder = AlertDialog.Builder(
+            requireContext()
+        )
+
+        val viewInflated: View = LayoutInflater.from(context)
+            .inflate(R.layout.add_person_dialog, view as ViewGroup?, false)
+// Set up the input
+// Set up the input
+        val name = viewInflated.findViewById<View>(com.example.rakshak_accidentsafetyapp.R.id.inputName) as EditText
+        val token = viewInflated.findViewById<View>(com.example.rakshak_accidentsafetyapp.R.id.inputToken) as EditText
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        builder.setView(viewInflated)
+        builder.setTitle("ADD PERSON TO TRACK")
+// Set up the buttons
+
+// Set up the buttons
+        builder.setPositiveButton(
+            "OK"
+        ) { dialog, which ->
+            dialog.dismiss()
+
+        }
+        builder.setNegativeButton(
+            "CANCEL"
+        ) { dialog, which -> dialog.cancel() }
+
+        builder.show()
     }
 
     private fun enableService() {
@@ -83,27 +121,18 @@ class DashBoardFragment : Fragment() {
 
             }
             setNegativeButton("CANCEL") { _: DialogInterface, _: Int ->
-                toggleService.isChecked=false
+                toggleService.isChecked = false
             }
         }
         val dialog: AlertDialog = builder.create()
         dialog.show()
-        }
-    private fun showToast(message:String)
-    {
-        Toast.makeText(context,message, Toast.LENGTH_SHORT).show()
-        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment DashBoardFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             DashBoardFragment().apply {
