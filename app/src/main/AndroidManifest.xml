@@ -13,9 +13,11 @@
         android:theme="@style/Theme.RakShakAccidentSafetyApp"
         tools:targetApi="31">
         <activity
-            android:name=".SplashActivity"
-            android:exported="true" >
-
+            android:name=".SOSActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AccidentTimerActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,10 +25,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".SplashActivity"
+            android:exported="true"></activity>
+        <activity
             android:name=".MainActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="true"></activity>
     </application>
 
 </manifest>

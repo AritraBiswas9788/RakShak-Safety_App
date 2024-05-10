@@ -43,6 +43,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     testImplementation("junit:junit:4.13.2")
 
+    implementation ("com.ncorti:slidetoact:0.11.0")
     //lottie files
     implementation("com.airbnb.android:lottie:6.1.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
