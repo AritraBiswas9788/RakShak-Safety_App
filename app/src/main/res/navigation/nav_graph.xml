@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/dashboardFragment">
+
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.example.rakshak_accidentsafetyapp.Fragments.DashBoardFragment"
+        android:label="fragment_home"
+        tools:layout="@layout/fragment_dash_board"/>
+    <fragment
+        android:id="@+id/ScanFragment"
+        android:name="com.example.rakshak_accidentsafetyapp.Fragments.ScanFragment"
+        android:label="fragment_scan"
+        tools:layout="@layout/fragment_scan"/>
+    <fragment
+        android:id="@+id/actionsFragment"
+        android:name="com.example.rakshak_accidentsafetyapp.Fragments.ActionsFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_blank"/>
+
+
+</navigation>

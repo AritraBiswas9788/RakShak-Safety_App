@@ -1,4 +1,4 @@
-package com.example.rakshak_accidentsafetyapp
+package com.example.rakshak_accidentsafetyapp.Activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,11 +8,13 @@ import android.view.WindowManager
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
+import com.example.rakshak_accidentsafetyapp.CircleProgressBar
+import com.example.rakshak_accidentsafetyapp.R
 import com.ncorti.slidetoact.SlideToActView
 
 
 class AccidentTimerActivity : AppCompatActivity() {
-    private lateinit var timer:CircleProgressBar
+    private lateinit var timer: CircleProgressBar
     private var cdt:CountDownTimer? = null
     private lateinit var slideBtn:com.ncorti.slidetoact.SlideToActView
     private lateinit var time:TextView
@@ -40,7 +42,7 @@ class AccidentTimerActivity : AppCompatActivity() {
             // when the time is up
             override fun onFinish() {
                 Log.i("checkTime","done.")
-                val intent = Intent(this@AccidentTimerActivity,SOSActivity::class.java)
+                val intent = Intent(this@AccidentTimerActivity, SOSActivity::class.java)
                 startActivity(intent)
             }
         }.start()
