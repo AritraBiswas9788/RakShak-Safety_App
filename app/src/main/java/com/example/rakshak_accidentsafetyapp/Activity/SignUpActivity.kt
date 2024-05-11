@@ -1,9 +1,14 @@
 package com.example.rakshak_accidentsafetyapp.Activity
 
+import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.location.LocationListener
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,11 +22,13 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.example.rakshak_accidentsafetyapp.DataClasses.Location
 import com.example.rakshak_accidentsafetyapp.R
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
+import com.firebase.geofire.GeoFire
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
@@ -47,9 +54,11 @@ class SignUpActivity : AppCompatActivity() {
     private val PICK_IMAGE_REQUEST = 1
     private var imageUrl: String? = null
     private lateinit var uriImg: String
-
+    private lateinit var ref:DatabaseReference
+    private lateinit  var geofire: GeoFire
     private var storageRef: StorageReference = Firebase.storage.reference
     private var dbRef: DatabaseReference = FirebaseDatabase.getInstance().reference
+    private lateinit var currentLocation: Location
 
     val pickMultipleMedia =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -132,25 +141,52 @@ class SignUpActivity : AppCompatActivity() {
                                 }
                                     .addOnSuccessListener { taskSnapshot ->
 
-                                        storageRef.child("images/$fileName.jpg").downloadUrl.addOnSuccessListener { url ->
-                                            val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, fcmtoken = token, location = Location(), trackList = arrayListOf(), contactList = arrayListOf())
+                                        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+                                        if (ActivityCompat.checkSelfPermission(
+                                                this,
+                                                Manifest.permission.ACCESS_FINE_LOCATION
+                                            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                                this,
+                                                Manifest.permission.ACCESS_COARSE_LOCATION
+                                            ) != PackageManager.PERMISSION_GRANTED
+                                        ) {
+                                            Log.e("mapCheck", "Permission-failed")
+                                        }
+                                        val locationListener = LocationListener { location ->
+                                            currentLocation =
+                                                Location(location.latitude, location.longitude)
 
-                                            mdatabaseref.child("${firebaseuser.uid}").setValue(user)
-                                                .addOnCompleteListener {
-                                                    Log.d("Your Device Token=>>>", token)
-                                                    val editPref: SharedPreferences.Editor = sharedPreferences.edit()
-                                                    editPref.putString("SavedToken", token)
-                                                    editPref.commit()
+                                            storageRef.child("images/$fileName.jpg").downloadUrl.addOnSuccessListener { url ->
+                                                val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, fcmtoken = token, location = currentLocation, trackList = arrayListOf(), contactList = arrayListOf())
 
-                                                    finishAffinity()
-                                                    val intent: Intent = Intent(this, MainActivity::class.java)
-                                                    startActivity(intent)
-
-                                                }
+                                                mdatabaseref.child("${firebaseuser.uid}").setValue(user)
+                                                    .addOnCompleteListener {
 
 
+                                                        Log.d("Your Device Token=>>>", token)
+                                                        val editPref: SharedPreferences.Editor = sharedPreferences.edit()
+                                                        editPref.putString("SavedToken", token)
+                                                        editPref.commit()
+
+                                                        finishAffinity()
+                                                        val intent: Intent = Intent(this, MainActivity::class.java)
+                                                        startActivity(intent)
+
+                                                    }
+
+
+
+                                            }
 
                                         }
+                                        locationManager.requestLocationUpdates(
+                                            LocationManager.NETWORK_PROVIDER,
+                                            500,
+                                            0f,
+                                            locationListener
+                                        )
+
+
                                     }
 
 
