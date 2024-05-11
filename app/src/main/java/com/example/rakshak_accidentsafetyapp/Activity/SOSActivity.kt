@@ -10,4 +10,7 @@ class SOSActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sosactivity)
 
     }
+
+
+
 }
