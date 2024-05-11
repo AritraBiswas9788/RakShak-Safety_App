@@ -1,5 +1,6 @@
 # PROBLEM STATEMENT 
 The proposed Accident Safety app aims to be a comprehensive and immediate solution to most traffic accidents. It uses in-built phone sensors to determine the occurrence of any accidents in the background, and provides an SOS alert to every nearby user. Then, it provides any first responders with an AR-based guide to treat any injuries detected via scan, with interactive voice-based directions.The app users in the proximity are notified so that they can take neccesary actions and also the vehicles approaching near the accident area are informed of the danger zone . In brief, it utilizes various cutting-edge technologies to handle any accidents efficiently and in every possible way and reduce all casualties and damages.
+![flaticon_accident](/fender-bender.png)
 # APPROACH 
  ## 1.Automatic Accident Detection
 The app leverages smartphone sensors like accelerometer and GPS, in background, to detect sudden changes in motion or impact, potentially signaling a vehicle crash.
