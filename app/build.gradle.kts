@@ -169,4 +169,6 @@ dependencies {
     // want to implement their own geo solution, see:
     // https://firebase.google.com/docs/firestore/solutions/geoqueries
     implementation ("com.firebase:geofire-android-common:3.2.0")
+    implementation ("com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 }
