@@ -19,9 +19,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
-import com.example.rakshak_accidentsafetyapp.Location
+import com.example.rakshak_accidentsafetyapp.DataClasses.Location
 import com.example.rakshak_accidentsafetyapp.R
-import com.example.rakshak_accidentsafetyapp.User
+import com.example.rakshak_accidentsafetyapp.DataClasses.User
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase

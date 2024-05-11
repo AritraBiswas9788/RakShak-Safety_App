@@ -1,6 +1,7 @@
-package com.example.rakshak_accidentsafetyapp
+package com.example.rakshak_accidentsafetyapp.DataClasses
 
-import com.google.type.LatLng
+import com.example.rakshak_accidentsafetyapp.DataClasses.Contact
+import com.example.rakshak_accidentsafetyapp.DataClasses.Location
 
 data class User(
     var name:String="",
@@ -8,7 +9,7 @@ data class User(
     var image:String="",
     val uid:String="",
     val fcmtoken:String="",
-    val location:Location,
+    val location: Location,
     val trackList: ArrayList<String> = arrayListOf(),
     val contactList: ArrayList<Contact> = arrayListOf()
 

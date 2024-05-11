@@ -1,4 +1,4 @@
-package com.example.rakshak_accidentsafetyapp
+package com.example.rakshak_accidentsafetyapp.DataClasses
 
 data class Contact (
     var name:String="",
