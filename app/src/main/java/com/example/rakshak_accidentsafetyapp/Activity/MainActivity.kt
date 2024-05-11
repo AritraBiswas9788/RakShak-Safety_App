@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
 // finally change the color
         window.setStatusBarColor(ContextCompat.getColor(this,R.color.teal));
         ActivityCompat.requestPermissions(this,
-            (arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.MANAGE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION)),
+            (arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.MANAGE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.CAMERA)),
             PackageManager.PERMISSION_GRANTED
         )
         val navHostFragment =

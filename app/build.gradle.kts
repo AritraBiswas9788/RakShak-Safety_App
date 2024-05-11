@@ -33,14 +33,105 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        mlModelBinding = true
+    }
 }
 
 dependencies {
+
+
+    // Barcode model
+    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-barcode-scanning:18.3.0'
+
+    // Object detection feature with bundled default classifier
+    implementation ("com.google.mlkit:object-detection:17.0.1")
+
+    // Object detection feature with custom classifier support
+    implementation ("com.google.mlkit:object-detection-custom:17.0.1")
+
+    // Face features
+    implementation ("com.google.mlkit:face-detection:16.1.6")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-face-detection:17.1.0'
+
+    // Text features
+    implementation ("com.google.mlkit:text-recognition:16.0.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.0'
+    implementation ("com.google.mlkit:text-recognition-chinese:16.0.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.0'
+    implementation ("com.google.mlkit:text-recognition-devanagari:16.0.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-text-recognition-devanagari:16.0.0'
+    implementation ("com.google.mlkit:text-recognition-japanese:16.0.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-text-recognition-japanese:16.0.0'
+    implementation ("com.google.mlkit:text-recognition-korean:16.0.0")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-text-recognition-korean:16.0.0'
+
+    // Image labeling
+    implementation ("com.google.mlkit:image-labeling:17.0.8")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-image-labeling:16.0.8'
+
+    // Image labeling custom
+    implementation ("com.google.mlkit:image-labeling-custom:17.0.2")
+    // Or comment the dependency above and uncomment the dependency below to
+    // use unbundled model that depends on Google Play Services
+    // implementation 'com.google.android.gms:play-services-mlkit-image-labeling-custom:16.0.0-beta5'
+
+    // Pose detection with default models
+    implementation ("com.google.mlkit:pose-detection:18.0.0-beta4")
+    // Pose detection with accurate models
+    implementation ("com.google.mlkit:pose-detection-accurate:18.0.0-beta4")
+
+    // Selfie segmentation
+    implementation ("com.google.mlkit:segmentation-selfie:16.0.0-beta5")
+
+    implementation ("com.google.mlkit:camera:16.0.0-beta3")
+
+    // Face Mesh Detection
+    implementation ("com.google.mlkit:face-mesh-detection:16.0.0-beta2")
+
+    // Subject Segmentation
+    implementation ("com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1")
+
+    // ViewModel and LiveData
+    implementation ("androidx.lifecycle:lifecycle-livedata:2.3.1")
+    implementation ("androidx.lifecycle:lifecycle-viewmodel:2.3.1")
+
+    implementation ("androidx.appcompat:appcompat:1.2.0")
+    implementation ("androidx.annotation:annotation:1.2.0")
+    implementation ("androidx.constraintlayout:constraintlayout:2.0.4")
+
+    // CameraX
+    implementation ("androidx.camera:camera-camera2:1.0.0-SNAPSHOT")
+    implementation ("androidx.camera:camera-lifecycle:1.0.0-SNAPSHOT")
+    implementation ("androidx.camera:camera-view:1.0.0-SNAPSHOT")
+
+    // On Device Machine Learnings
+    implementation ("com.google.android.odml:image:1.0.0-beta1")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
+    implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
+    implementation("org.tensorflow:tensorflow-lite-gpu:2.3.0")
     testImplementation("junit:junit:4.13.2")
 
     implementation ("com.ncorti:slidetoact:0.11.0")
@@ -53,4 +144,7 @@ dependencies {
     implementation ("com.jpardogo.googleprogressbar:library:1.2.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+
+    implementation ("org.tensorflow:tensorflow-lite-support:0.1.0")
+    implementation ("org.tensorflow:tensorflow-lite-metadata:0.1.0")
 }
