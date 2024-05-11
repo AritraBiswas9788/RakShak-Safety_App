@@ -133,7 +133,7 @@ class SignUpActivity : AppCompatActivity() {
                                     .addOnSuccessListener { taskSnapshot ->
 
                                         storageRef.child("images/$fileName.jpg").downloadUrl.addOnSuccessListener { url ->
-                                            val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, location = Location(), trackList = arrayListOf(), contactList = arrayListOf())
+                                            val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, fcmtoken = token, location = Location(), trackList = arrayListOf(), contactList = arrayListOf())
 
                                             mdatabaseref.child("${firebaseuser.uid}").setValue(user)
                                                 .addOnCompleteListener {
