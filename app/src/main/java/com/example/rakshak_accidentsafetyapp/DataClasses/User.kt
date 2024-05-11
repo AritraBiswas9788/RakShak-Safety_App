@@ -12,7 +12,7 @@ data class User(
     val location: Location = Location(),
     val trackList: ArrayList<String> = arrayListOf(),
     val contactList: ArrayList<Contact> = arrayListOf(),
-    val geoFireInfo: Pair<String,Location> = Pair("",Location())
+    val geoFireInfo: GeoFireInfo = GeoFireInfo()
 )
 
 
