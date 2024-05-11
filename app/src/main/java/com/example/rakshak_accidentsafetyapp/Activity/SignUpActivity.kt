@@ -25,15 +25,18 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
+import com.example.rakshak_accidentsafetyapp.DataClasses.GeoFireInfo
 import com.example.rakshak_accidentsafetyapp.DataClasses.Location
 import com.example.rakshak_accidentsafetyapp.R
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
 import com.firebase.geofire.GeoFire
+import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.messaging.FirebaseMessaging
@@ -55,7 +58,7 @@ class SignUpActivity : AppCompatActivity() {
     private var imageUrl: String? = null
     private lateinit var uriImg: String
     private lateinit var ref:DatabaseReference
-    private lateinit  var geofire: GeoFire
+
     private var storageRef: StorageReference = Firebase.storage.reference
     private var dbRef: DatabaseReference = FirebaseDatabase.getInstance().reference
     private lateinit var currentLocation: Location
@@ -78,6 +81,10 @@ class SignUpActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
+        ActivityCompat.requestPermissions(this,
+            (arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.MANAGE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.CAMERA)),
+            PackageManager.PERMISSION_GRANTED
+        )
         name = findViewById(R.id.editTextname)
         email = findViewById(R.id.editTextTextEmailAddress)
         password = findViewById(R.id.editTextTextPassword)
@@ -86,8 +93,10 @@ class SignUpActivity : AppCompatActivity() {
         address = findViewById(R.id.editTextAddress)
         mdatabaseref = FirebaseDatabase.getInstance().getReference("Users")
         imageView = findViewById(R.id.uploadPic)
+       ref=FirebaseDatabase.getInstance().getReference("Users")
 
-        imageView.setOnClickListener {
+
+         imageView.setOnClickListener {
             pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         button.setOnClickListener {
@@ -157,12 +166,29 @@ class SignUpActivity : AppCompatActivity() {
                                                 Location(location.latitude, location.longitude)
 
                                             storageRef.child("images/$fileName.jpg").downloadUrl.addOnSuccessListener { url ->
-                                                val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, fcmtoken = token, location = currentLocation, trackList = arrayListOf(), contactList = arrayListOf())
+                                                val user = User( name = name1, email = email1, image = url.toString(), uid = firebaseuser.uid, fcmtoken = token, location = currentLocation, trackList = arrayListOf(), contactList = arrayListOf(), geoFireInfo = GeoFireInfo())
 
                                                 mdatabaseref.child("${firebaseuser.uid}").setValue(user)
                                                     .addOnCompleteListener {
 
+                                                        val geoFire=GeoFire(ref.child(mauth.currentUser!!.uid))
 
+                                                        geoFire.setLocation(
+                                                            "geoFireInfo",
+                                                            GeoLocation(location.latitude, location.longitude),
+                                                            object : GeoFire.CompletionListener {
+                                                                override fun onComplete(key: String?, error: DatabaseError?) {
+                                                                    if(error==null)
+                                                                    {
+                                                                        Log.i("geofire","location stored successfully")
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Log.i("geofire","error in geofire ")
+                                                                    }
+                                                                }
+
+                                                            })
                                                         Log.d("Your Device Token=>>>", token)
                                                         val editPref: SharedPreferences.Editor = sharedPreferences.edit()
                                                         editPref.putString("SavedToken", token)
@@ -172,6 +198,9 @@ class SignUpActivity : AppCompatActivity() {
                                                         val intent: Intent = Intent(this, MainActivity::class.java)
                                                         startActivity(intent)
 
+                                                    }
+                                                    .addOnFailureListener {
+                                                        Log.e("dbCheck",it.toString())
                                                     }
 
 

@@ -2,6 +2,7 @@ package com.example.rakshak_accidentsafetyapp.Activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
@@ -10,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.example.rakshak_accidentsafetyapp.R
@@ -32,6 +34,11 @@ class LoginScreen : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_screen)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        ActivityCompat.requestPermissions(this,
+            (arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.MANAGE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.CAMERA)),
+            PackageManager.PERMISSION_GRANTED
+        )
         email= findViewById(R.id.EmailEntryField)
         signupintent=findViewById(R.id.txtNewHereSign)
         btn=findViewById(R.id.btnSignin)
