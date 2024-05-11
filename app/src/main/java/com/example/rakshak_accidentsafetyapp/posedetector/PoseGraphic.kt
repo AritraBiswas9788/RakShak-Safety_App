@@ -20,12 +20,16 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import android.graphics.RectF
 import android.util.Log
+import com.example.rakshak_accidentsafetyapp.Activity.CameraXLivePreviewActivity
+import com.example.rakshak_accidentsafetyapp.DataEvent
 import com.example.rakshak_accidentsafetyapp.GraphicOverlay
 import com.example.rakshak_accidentsafetyapp.ml.Model
 import com.google.mlkit.vision.pose.Pose
 import com.google.mlkit.vision.pose.PoseLandmark
+import org.greenrobot.eventbus.EventBus
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
@@ -58,10 +62,13 @@ internal constructor(
     private var zMin = java.lang.Float.MAX_VALUE
     private var zMax = java.lang.Float.MIN_VALUE
     private val classificationTextPaint: Paint
+    private var textBackgroundPaint = Paint()
+    private var textPaint = Paint()
     private val leftPaint: Paint
     private val rightPaint: Paint
     private val whitePaint: Paint
     private var count = 0
+    private var callback: CameraXLivePreviewActivity.DataCallback? = null
 
 //    private var storageRef:StorageReference
 
@@ -74,6 +81,14 @@ internal constructor(
         classificationTextPaint.color = Color.WHITE
         classificationTextPaint.textSize = POSE_CLASSIFICATION_TEXT_SIZE
         classificationTextPaint.setShadowLayer(5.0f, 0f, 0f, Color.BLACK)
+
+        textBackgroundPaint.color = Color.CYAN
+        textBackgroundPaint.style = Paint.Style.FILL
+        textBackgroundPaint.textSize = 50f
+
+        textPaint.color = Color.WHITE
+        textPaint.style = Paint.Style.FILL
+        textPaint.textSize = 50f
 
         whitePaint = Paint()
         whitePaint.strokeWidth = STROKE_WIDTH
@@ -203,7 +218,35 @@ internal constructor(
             Log.i("modeloutput",classification)
             Log.i("modeloutput",confidence.toString())
             if(classification != "clean")
-            {}
+            {
+                //draw face
+
+                updateList(classification,"face")
+                var hpad = calcDistance(rightPoint, leftPoint)*0.25f
+                var vpad = calcDistance(topPoint,bottomPoint)*0.85f
+//                hpad = max(hpad, 60.0f)
+//                vpad = max(vpad, 60.0f)
+
+                val left = translateX(rightPoint.position3D.x) - hpad
+                val top = translateY(topPoint.position3D.y) - vpad
+                val right = translateX(leftPoint.position3D.x) + hpad
+                val bottom = translateY(bottomPoint.position3D.y) + vpad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+                val drawableText = classification+" : "+String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
 
             //uploadFile(crop2, "face")
         } catch (e: Exception) {
@@ -282,6 +325,42 @@ internal constructor(
                 height,
             )
 
+            val outputArr = outputGenerator(crop2)
+            val classification = outputArr[0] as String
+            val confidence = outputArr[1] as Float
+
+            Log.i("modeloutput",classification)
+            Log.i("modeloutput",confidence.toString())
+            if(classification != "clean")
+            {
+                //draw face
+                updateList(classification,"body")
+                var pad =max(calcDistance(rightPoint, leftPoint),calcDistance(topPoint,bottomPoint))*0.25f
+
+//                hpad = max(hpad, 60.0f)
+//                vpad = max(vpad, 60.0f)
+
+                val left = translateX(rightPoint.position3D.x) - pad
+                val top = translateY(topPoint.position3D.y) - pad
+                val right = translateX(leftPoint.position3D.x) + pad
+                val bottom = translateY(bottomPoint.position3D.y) + pad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+
+                val drawableText = classification+" : "+String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
 
 
             //uploadFile(crop2, "body")
@@ -350,7 +429,41 @@ internal constructor(
                 ((leftPoint.position3D.x + hortPadding) - (rightPoint.position3D.x - hortPadding)).toInt(),
                 ((bottomPoint.position3D.y + vertpadding) - (topPoint.position3D.y - vertpadding)).toInt(),
             )
-            //uploadFile(crop2, "right_hand")
+
+
+
+            val outputArr = outputGenerator(crop2)
+            val classification = outputArr[0] as String
+            val confidence = outputArr[1] as Float
+
+            Log.i("modeloutput",classification)
+            Log.i("modeloutput",confidence.toString())
+            if(classification != "clean") {
+
+                updateList(classification,"Right-Arm")
+                var hpad = calcDistance(rightPoint, leftPoint)*0.25f
+                var vpad = calcDistance(topPoint,bottomPoint)*0.25f
+                //uploadFile(crop2, "right_hand")
+                val left = translateX(rightPoint.position3D.x) - hpad
+                val top = translateY(topPoint.position3D.y) - vpad
+                val right = translateX(leftPoint.position3D.x) + hpad
+                val bottom = translateY(bottomPoint.position3D.y) + vpad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+                val drawableText = classification + " : " + String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
         } catch (e: Exception) {
             Log.i("uploadCheck", "right_hand$e")
         }
@@ -416,6 +529,36 @@ internal constructor(
                 ((leftPoint.position3D.x + hortPadding) - (rightPoint.position3D.x - hortPadding)).toInt(),
                 ((bottomPoint.position3D.y + vertpadding) - (topPoint.position3D.y - vertpadding)).toInt(),
             )
+            val outputArr = outputGenerator(crop2)
+            val classification = outputArr[0] as String
+            val confidence = outputArr[1] as Float
+
+            Log.i("modeloutput",classification)
+            Log.i("modeloutput",confidence.toString())
+            if(classification != "clean") {
+                var hpad = calcDistance(rightPoint, leftPoint)*0.25f
+                var vpad = calcDistance(topPoint,bottomPoint)*0.25f
+                //uploadFile(crop2, "right_hand")
+                val left = translateX(rightPoint.position3D.x) - hpad
+                val top = translateY(topPoint.position3D.y) - vpad
+                val right = translateX(leftPoint.position3D.x) + hpad
+                val bottom = translateY(bottomPoint.position3D.y) + vpad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+                val drawableText = classification + " : " + String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
             //uploadFile(crop2, "left_hand")
         } catch (e: Exception) {
             Log.i("uploadCheck", "left_hand$e")
@@ -491,6 +634,36 @@ internal constructor(
                 ((leftPoint.position3D.x + hortPadding) - (rightPoint.position3D.x - hortPadding)).toInt(),
                 height,
             )
+            val outputArr = outputGenerator(crop2)
+            val classification = outputArr[0] as String
+            val confidence = outputArr[1] as Float
+
+            Log.i("modeloutput",classification)
+            Log.i("modeloutput",confidence.toString())
+            if(classification != "clean") {
+                var hpad = calcDistance(rightPoint, leftPoint)*0.25f
+                var vpad = calcDistance(topPoint,bottomPoint)*0.25f
+                //uploadFile(crop2, "right_hand")
+                val left = translateX(rightPoint.position3D.x) - hpad
+                val top = translateY(topPoint.position3D.y) - vpad
+                val right = translateX(leftPoint.position3D.x) + hpad
+                val bottom = translateY(bottomPoint.position3D.y) + vpad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+                val drawableText = classification + " : " + String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
             //uploadFile(crop2, "right_leg")
         } catch (e: Exception) {
             Log.i("uploadCheck", "right_leg$e")
@@ -567,6 +740,36 @@ internal constructor(
                 ((leftPoint.position3D.x + hortPadding) - (rightPoint.position3D.x - hortPadding)).toInt(),
                 height,
             )
+            val outputArr = outputGenerator(crop2)
+            val classification = outputArr[0] as String
+            val confidence = outputArr[1] as Float
+
+            Log.i("modeloutput",classification)
+            Log.i("modeloutput",confidence.toString())
+            if(classification != "clean") {
+                var hpad = calcDistance(rightPoint, leftPoint)*0.25f
+                var vpad = calcDistance(topPoint,bottomPoint)*0.25f
+                //uploadFile(crop2, "right_hand")
+                val left = translateX(rightPoint.position3D.x) - hpad
+                val top = translateY(topPoint.position3D.y) - vpad
+                val right = translateX(leftPoint.position3D.x) + hpad
+                val bottom = translateY(bottomPoint.position3D.y) + vpad
+                val bounds = RectF(left, top, right, bottom)
+                drawRectangle(canvas, bounds)
+                val drawableText = classification + " : " + String.format("%.2f", confidence)
+                var bound = Rect()
+                textBackgroundPaint.getTextBounds(drawableText, 0, drawableText.length, bound)
+                val textWidth = bound.width()
+                val textHeight = bound.height()
+                canvas.drawRect(
+                    left,
+                    top,
+                    left + textWidth + BOUNDING_RECT_TEXT_PADDING,
+                    top + textHeight + BOUNDING_RECT_TEXT_PADDING,
+                    textBackgroundPaint
+                )
+                canvas.drawText(drawableText, left, top + bound.height(), textPaint)
+            }
             //uploadFile(crop2, "left_leg")
         } catch (e: Exception) {
             Log.i("uploadCheck", "left_leg$e")
@@ -625,6 +828,11 @@ internal constructor(
         }
     }
 
+    private fun updateList(woundClass:String, bodyPart:String)
+    {
+        EventBus.getDefault().post(DataEvent(woundClass,bodyPart))
+    }
+
     private fun outputGenerator(bitmap: Bitmap): ArrayList<Any> {
         val model = Model.newInstance(applicationContext)
 
@@ -681,7 +889,7 @@ internal constructor(
 // Releases model resources if no longer used.
         model.close()
 
-        return arrayListOf(classes[maxPos],maxConfidence)
+        return arrayListOf(classes[maxPos],(maxConfidence/255.0).toFloat())
 
     }
 
@@ -800,7 +1008,7 @@ internal constructor(
         val rectPaint = Paint()
         rectPaint.strokeWidth = STROKE_WIDTH
         rectPaint.style = Paint.Style.STROKE
-        rectPaint.color = Color.WHITE
+        rectPaint.color = Color.CYAN
         canvas.drawRect(bounds, rectPaint)
     }
 
@@ -864,5 +1072,6 @@ internal constructor(
         private val IN_FRAME_LIKELIHOOD_TEXT_SIZE = 30.0f
         private val STROKE_WIDTH = 10.0f
         private val POSE_CLASSIFICATION_TEXT_SIZE = 60.0f
+        private const val BOUNDING_RECT_TEXT_PADDING = 8
     }
 }

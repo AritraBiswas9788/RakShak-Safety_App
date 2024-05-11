@@ -21,6 +21,7 @@ import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemSelectedListener
 import android.widget.ArrayAdapter
@@ -40,9 +41,12 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.rakshak_accidentsafetyapp.CameraXViewModel
+
+import com.example.rakshak_accidentsafetyapp.DataEvent
 import com.example.rakshak_accidentsafetyapp.GraphicOverlay
 import com.example.rakshak_accidentsafetyapp.R
 import com.example.rakshak_accidentsafetyapp.VisionImageProcessor
@@ -51,6 +55,9 @@ import com.google.mlkit.common.MlKitException
 
 import com.example.rakshak_accidentsafetyapp.posedetector.PoseDetectorProcessor
 import com.example.rakshak_accidentsafetyapp.preference.PreferenceUtils
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
 
 /** Live preview demo app for ML Kit APIs using CameraX. */
@@ -72,10 +79,15 @@ class CameraXLivePreviewActivity :
   private var cameraSelector: CameraSelector? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
+    WindowCompat.setDecorFitsSystemWindows(window, true)
+    window.setFlags(
+      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+      WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     super.onCreate(savedInstanceState)
     /*FirebaseApp.initializeApp(
       applicationContext
     )*/
+    EventBus.getDefault().register(this)
     Log.d(TAG, "onCreate")
     if (savedInstanceState != null) {
       selectedModel = savedInstanceState.getString(STATE_SELECTED_MODEL, POSE_DETECTION)
@@ -90,7 +102,7 @@ class CameraXLivePreviewActivity :
     if (graphicOverlay == null) {
       Log.d(TAG, "graphicOverlay is null")
     }
-    val spinner = findViewById<Spinner>(R.id.spinner)
+//    val spinner = findViewById<Spinner>(R.id.spinner)
     val options: MutableList<String> = ArrayList()
     options.add(POSE_DETECTION)
 
@@ -99,8 +111,8 @@ class CameraXLivePreviewActivity :
     // Drop down layout style - list view with radio button
     dataAdapter.setDropDownViewResource(com.google.android.material.R.layout.support_simple_spinner_dropdown_item)
     // attaching data adapter to spinner
-    spinner.adapter = dataAdapter
-    spinner.onItemSelectedListener = this
+//    spinner.adapter = dataAdapter
+//    spinner.onItemSelectedListener = this
     val facingSwitch = findViewById<ToggleButton>(R.id.facing_switch)
     facingSwitch.setOnCheckedChangeListener(this)
     ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(application))
@@ -168,6 +180,14 @@ class CameraXLivePreviewActivity :
         Toast.LENGTH_SHORT
       )
       .show()
+  }
+
+  @Subscribe(threadMode = ThreadMode.MAIN)
+  fun onDataReceived(event: DataEvent) {
+    // Handle the received data here
+    val wound = event.wound
+    val part = event.bodyPart
+    //Log.d("MyActivity", "Received data: $data")
   }
 
   public override fun onResume() {
@@ -298,6 +318,10 @@ class CameraXLivePreviewActivity :
     )
     cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */ this, cameraSelector!!, analysisUseCase)
   }
+  interface DataCallback {
+    fun onDataReceived(data: String)
+  }
+
 
   companion object {
     private const val TAG = "CameraXLivePreview"
@@ -307,4 +331,5 @@ class CameraXLivePreviewActivity :
 
     private const val STATE_SELECTED_MODEL = "selected_model"
   }
+
 }
