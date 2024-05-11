@@ -68,7 +68,6 @@ internal constructor(
     private val rightPaint: Paint
     private val whitePaint: Paint
     private var count = 0
-    private var callback: CameraXLivePreviewActivity.DataCallback? = null
 
 //    private var storageRef:StorageReference
 
@@ -215,8 +214,8 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean")
             {
                 //draw face
@@ -329,8 +328,8 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean")
             {
                 //draw face
@@ -436,8 +435,8 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean") {
 
                 updateList(classification,"Right-Arm")
@@ -533,9 +532,11 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean") {
+
+                updateList(classification,"Left-Arm")
                 var hpad = calcDistance(rightPoint, leftPoint)*0.25f
                 var vpad = calcDistance(topPoint,bottomPoint)*0.25f
                 //uploadFile(crop2, "right_hand")
@@ -638,9 +639,10 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean") {
+                updateList(classification,"Right-Leg")
                 var hpad = calcDistance(rightPoint, leftPoint)*0.25f
                 var vpad = calcDistance(topPoint,bottomPoint)*0.25f
                 //uploadFile(crop2, "right_hand")
@@ -744,9 +746,10 @@ internal constructor(
             val classification = outputArr[0] as String
             val confidence = outputArr[1] as Float
 
-            Log.i("modeloutput",classification)
-            Log.i("modeloutput",confidence.toString())
+//            Log.i("modeloutput",classification)
+//            Log.i("modeloutput",confidence.toString())
             if(classification != "clean") {
+                updateList(classification,"Left-Leg")
                 var hpad = calcDistance(rightPoint, leftPoint)*0.25f
                 var vpad = calcDistance(topPoint,bottomPoint)*0.25f
                 //uploadFile(crop2, "right_hand")

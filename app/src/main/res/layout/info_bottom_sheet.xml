@@ -65,7 +65,7 @@
                 android:layout_marginTop="5dp"
                 android:background="@drawable/listbg"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
                 tools:listitem="@layout/recitem"
                 />
     </androidx.appcompat.widget.LinearLayoutCompat>

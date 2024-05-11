@@ -44,6 +44,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.rakshak_accidentsafetyapp.Adapters.DetectedWoundAdapter
 import com.example.rakshak_accidentsafetyapp.CameraXViewModel
 
 import com.example.rakshak_accidentsafetyapp.DataEvent
@@ -77,6 +80,9 @@ class CameraXLivePreviewActivity :
   private var selectedModel = POSE_DETECTION
   private var lensFacing = CameraSelector.LENS_FACING_BACK
   private var cameraSelector: CameraSelector? = null
+  var woundList = arrayListOf<Pair<String,String>>()
+  private lateinit var woundRecView: RecyclerView
+  private lateinit var woundRecAdapter: DetectedWoundAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     WindowCompat.setDecorFitsSystemWindows(window, true)
@@ -95,6 +101,10 @@ class CameraXLivePreviewActivity :
     cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
     setContentView(R.layout.activity_vision_camerax_live_preview)
     previewView = findViewById(R.id.preview_view)
+    woundRecView=findViewById(R.id.DisplayList)
+    woundRecAdapter= DetectedWoundAdapter(this,woundList)
+    woundRecView.adapter=woundRecAdapter
+    woundRecView.layoutManager=LinearLayoutManager(this)
     if (previewView == null) {
       Log.d(TAG, "previewView is null")
     }
@@ -187,7 +197,16 @@ class CameraXLivePreviewActivity :
     // Handle the received data here
     val wound = event.wound
     val part = event.bodyPart
-    //Log.d("MyActivity", "Received data: $data")
+    updateList(wound,part)
+    Log.d("busCheck", "Received data: ${event.wound}")
+  }
+
+  private fun updateList(wound: String, part: String) {
+    for(item in woundList)
+      if(item.first==wound)
+        return
+    woundList.add(Pair(wound,part))
+    woundRecAdapter.updateList(woundList)
   }
 
   public override fun onResume() {
@@ -317,9 +336,6 @@ class CameraXLivePreviewActivity :
       }
     )
     cameraProvider!!.bindToLifecycle(/* lifecycleOwner= */ this, cameraSelector!!, analysisUseCase)
-  }
-  interface DataCallback {
-    fun onDataReceived(data: String)
   }
 
 
