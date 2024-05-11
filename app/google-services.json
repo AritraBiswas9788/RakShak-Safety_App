@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "472623515067",
+    "project_id": "rakshak-552cc",
+    "storage_bucket": "rakshak-552cc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:472623515067:android:79e5380956dd06539c709e",
+        "android_client_info": {
+          "package_name": "com.example.rakshak_accidentsafetyapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBP-3hcOAUCyObNfRDSeg7PNZ4iayMU7xA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

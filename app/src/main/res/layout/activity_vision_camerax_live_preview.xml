@@ -29,25 +29,28 @@
       app:layout_constraintBottom_toBottomOf="@id/preview_view"/>
 
 
+    <LinearLayout
+        android:id="@+id/control"
+        android:layout_width="wrap_content"
+        android:layout_height="45dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="45dp"
+        android:background="@drawable/camerabg"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-  <LinearLayout
-      android:id="@+id/control"
-      android:layout_width="match_parent"
-      android:layout_height="45dp"
-      app:layout_constraintTop_toTopOf="parent"
-      android:background="#000"
-      android:orientation="horizontal">
-
-    <ToggleButton
-        android:id="@+id/facing_switch"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_gravity="center_vertical"
-        android:background="@layout/toggle_style"
-        android:checked="false"
-        android:textOff=""
-        android:textOn=""/>
-  </LinearLayout>
+      <ToggleButton
+          android:id="@+id/facing_switch"
+          android:layout_width="48dp"
+          android:layout_height="48dp"
+          android:layout_gravity="center_vertical"
+          android:background="@layout/toggle_style"
+          android:checked="false"
+          android:textOff=""
+          android:textOn="" />
+    </LinearLayout>
   </androidx.constraintlayout.widget.ConstraintLayout>
 
   <include
