@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,11 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
 import androidx.fragment.app.Fragment
+import com.example.rakshak_accidentsafetyapp.DataClasses.User
 import com.example.rakshak_accidentsafetyapp.R
 import com.google.android.material.switchmaterial.SwitchMaterial
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -21,17 +25,15 @@ import com.google.android.material.switchmaterial.SwitchMaterial
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [DashBoardFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class DashBoardFragment : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var toggleService: SwitchMaterial
     private lateinit var addPersonButton: AppCompatButton
+
+    private var dbRef = FirebaseDatabase.getInstance().getReference("Users")
+    private var mauth= FirebaseAuth.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,6 +56,14 @@ class DashBoardFragment : Fragment() {
 
         toggleService = view.findViewById<SwitchMaterial>(R.id.toggleService)
         addPersonButton = view.findViewById(R.id.addPerson)
+
+        val uid = mauth.currentUser!!.uid
+
+        dbRef.child(uid).get().addOnSuccessListener {snap ->
+            val user = snap.getValue(User::class.java)
+            Log.i("dbcheck",user.toString())
+
+        }
         addPersonButton.setOnClickListener {
             addPersonDialog()
         }

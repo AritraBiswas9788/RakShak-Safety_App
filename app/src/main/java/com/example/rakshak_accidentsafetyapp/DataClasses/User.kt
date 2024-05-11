@@ -9,8 +9,9 @@ data class User(
     var image:String="",
     val uid:String="",
     val fcmtoken:String="",
-    val location: Location,
+    val location: Location = Location(),
     val trackList: ArrayList<String> = arrayListOf(),
     val contactList: ArrayList<Contact> = arrayListOf()
-
 )
+
+

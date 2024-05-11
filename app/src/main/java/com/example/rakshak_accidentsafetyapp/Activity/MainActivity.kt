@@ -11,9 +11,11 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.example.rakshak_accidentsafetyapp.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
+    private var dbRef = FirebaseDatabase.getInstance().getReference("Users")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
