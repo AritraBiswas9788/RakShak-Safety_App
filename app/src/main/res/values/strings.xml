@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">RakShak-AccidentSafetyApp</string>
     <string name="because_nothing_is_more_precious_than_life">BECAUSE NOTHING IS MORE PRECIOUS THAN LIFE</string>
     <!-- TODO: Remove or change this placeholder text -->
@@ -276,4 +276,5 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="mapbox_access_token" translatable="false" tools:ignore="UnusedResources">pk.eyJ1IjoiYXJpdHJhOTc4OCIsImEiOiJjbG16MXVkM3IxY3k2MndudnB1eWp6cm01In0.0a62xnPfsD67MQYJieU5og</string>
 </resources>

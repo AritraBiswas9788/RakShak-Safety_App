@@ -10,7 +10,7 @@ data class User(
     val uid:String="",
     val fcmtoken:String="",
     val location: Location = Location(),
-    val trackList: ArrayList<String> = arrayListOf(),
+    val trackList: ArrayList<TrackItem> = arrayListOf(),
     val contactList: ArrayList<Contact> = arrayListOf(),
     val geoFireInfo: GeoFireInfo = GeoFireInfo()
 )

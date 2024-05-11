@@ -131,14 +131,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView"  />
 
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/trackList"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginTop="12dp"
+            android:layout_marginBottom="7dp"
+            app:layout_constraintBottom_toTopOf="@+id/addPerson"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            app:layout_constraintTop_toBottomOf="@+id/textView4"
+            app:layout_constraintVertical_bias="0.0"
+            tools:listitem="@layout/trackitem" />
+
         <ImageView
             android:layout_width="40dp"
             android:layout_height="55dp"
@@ -152,21 +159,65 @@
             android:id="@+id/addPerson"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="20dp"
-            android:paddingLeft="20dp"
-            android:drawableStart="@drawable/contacts"
-            android:drawablePadding="12dp"
             android:layout_gravity="bottom"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="7dp"
             android:background="@color/teal"
+            android:drawableStart="@drawable/contacts"
+            android:drawablePadding="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
             android:text="ADD PERSON"
             android:textColor="@android:color/white"
             android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/token"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="7dp"
+            android:background="@color/teal"
+
+            android:drawablePadding="12dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="TOKEN: "
+            android:gravity="left|center_vertical"
+            android:textColor="@android:color/white"
+            android:textSize="15sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/trackList" />
+            app:layout_constraintStart_toEndOf="@+id/addPerson" />
+
+        <ImageView
+            android:id="@+id/copy"
+            android:layout_width="45dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:elevation="45dp"
+            android:src="@drawable/clipboard"
+            app:layout_constraintBottom_toBottomOf="@+id/token"
+            app:layout_constraintEnd_toEndOf="@+id/token"
+            app:layout_constraintTop_toTopOf="@+id/token" />
+
+        <TextView
+            android:id="@+id/tokenText"
+            android:layout_width="0dp"
+            android:textSize="10sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="65dp"
+            android:elevation="90dp"
+            app:layout_constraintBottom_toBottomOf="@+id/token"
+            app:layout_constraintEnd_toStartOf="@+id/copy"
+            app:layout_constraintStart_toStartOf="@+id/token"
+            app:layout_constraintTop_toTopOf="@+id/token" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

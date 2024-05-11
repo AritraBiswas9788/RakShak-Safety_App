@@ -24,15 +24,14 @@
         android:theme="@style/Theme.RakShakAccidentSafetyApp"
         tools:targetApi="31">
         <activity
+            android:name=".Activity.LocationPointActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activity.SignUpActivity"
-            android:exported="true" >
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".Activity.LoginScreen"
-            android:exported="true" >
-
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".Activity.SOSActivity"
             android:exported="false" />

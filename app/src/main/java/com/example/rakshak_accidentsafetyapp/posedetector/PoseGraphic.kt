@@ -891,7 +891,6 @@ internal constructor(
 
 // Releases model resources if no longer used.
         model.close()
-
         return arrayListOf(classes[maxPos],(maxConfidence/255.0).toFloat())
 
     }

@@ -1,5 +1,10 @@
 package com.example.rakshak_accidentsafetyapp.Fragments
 
+import android.R.attr.label
+import android.R.attr.text
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
@@ -9,10 +14,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.AppCompatButton
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.rakshak_accidentsafetyapp.Adapters.TrackAdapter
+import com.example.rakshak_accidentsafetyapp.DataClasses.TrackItem
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
 import com.example.rakshak_accidentsafetyapp.R
 import com.google.android.material.switchmaterial.SwitchMaterial
@@ -31,10 +43,34 @@ class DashBoardFragment : Fragment() {
     private var param2: String? = null
     private lateinit var toggleService: SwitchMaterial
     private lateinit var addPersonButton: AppCompatButton
+    private lateinit var trackRecyclerView: RecyclerView
+    private lateinit var trackAdapter:TrackAdapter
 
+    private lateinit var copy: ImageView
+    private lateinit var token: TextView
     private var dbRef = FirebaseDatabase.getInstance().getReference("Users")
     private var mauth= FirebaseAuth.getInstance()
+    private var trackList = arrayListOf<TrackItem>()
+    private var userData = User()
 
+    init {
+        val uid = mauth.currentUser!!.uid
+        dbRef.child(uid).get().addOnSuccessListener { snap ->
+            val user = snap.getValue(User::class.java)
+            if (user != null) {
+                userData=user
+            }
+            Log.i("dbcheck",user.toString())
+            trackList.clear()
+            trackList.addAll(user!!.trackList)
+            trackAdapter?.updateList(trackList)
+            Log.i("busCheck",trackList.size.toString())
+            token.text=user.uid
+
+
+        }
+
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -54,15 +90,17 @@ class DashBoardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        trackAdapter= TrackAdapter(requireContext(),trackList)
         toggleService = view.findViewById<SwitchMaterial>(R.id.toggleService)
         addPersonButton = view.findViewById(R.id.addPerson)
+        copy = view.findViewById(R.id.copy)
+        token = view.findViewById(R.id.tokenText)
 
-        val uid = mauth.currentUser!!.uid
-
-        dbRef.child(uid).get().addOnSuccessListener {snap ->
-            val user = snap.getValue(User::class.java)
-            Log.i("dbcheck",user.toString())
-
+        copy.setOnClickListener {
+            val clipboard: ClipboardManager? =
+                context?.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+            val clip = ClipData.newPlainText("copy-text", token.text.toString())
+            clipboard?.setPrimaryClip(clip)
         }
         addPersonButton.setOnClickListener {
             addPersonDialog()
@@ -72,6 +110,11 @@ class DashBoardFragment : Fragment() {
                 enableService()
             }
         }
+
+        trackRecyclerView = view.findViewById(R.id.trackList)
+        trackRecyclerView.adapter=trackAdapter
+        trackRecyclerView.layoutManager=LinearLayoutManager(context)
+        trackAdapter.updateList(trackList)
     }
 
     private fun addPersonDialog() {
@@ -81,20 +124,17 @@ class DashBoardFragment : Fragment() {
 
         val viewInflated: View = LayoutInflater.from(context)
             .inflate(R.layout.add_person_dialog, view as ViewGroup?, false)
-// Set up the input
-// Set up the input
-        val name = viewInflated.findViewById<View>(com.example.rakshak_accidentsafetyapp.R.id.inputName) as EditText
-        val token = viewInflated.findViewById<View>(com.example.rakshak_accidentsafetyapp.R.id.inputToken) as EditText
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-// Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        val name = viewInflated.findViewById<View>(R.id.inputName) as EditText
+        val token = viewInflated.findViewById<View>(R.id.inputToken) as EditText
+
         builder.setView(viewInflated)
         builder.setTitle("ADD PERSON TO TRACK")
-// Set up the buttons
 
-// Set up the buttons
         builder.setPositiveButton(
             "OK"
         ) { dialog, which ->
+
+            checkData(name.text.toString(),token.text.toString())
             dialog.dismiss()
 
         }
@@ -103,6 +143,31 @@ class DashBoardFragment : Fragment() {
         ) { dialog, which -> dialog.cancel() }
 
         builder.show()
+    }
+
+    private fun checkData(name: String, token: String) {
+
+        val uid = mauth.currentUser!!.uid
+        dbRef.child(token).get().addOnSuccessListener {snap ->
+            val user = snap.getValue(User::class.java)
+
+            if(user==null)
+            {
+                Toast.makeText(context,"No Such Token found",Toast.LENGTH_SHORT).show()
+            }
+            else
+            {
+                trackList.add(TrackItem(name,token,user.image))
+                trackAdapter.updateList(trackList)
+                userData.trackList.clear()
+                userData.trackList.addAll(trackList)
+                dbRef.child(uid).setValue(userData)
+                    .addOnCompleteListener {
+                        Log.i("dbCheck","track-list updated")
+                    }
+
+            }
+        }
     }
 
     private fun enableService() {

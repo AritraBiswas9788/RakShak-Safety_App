@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:hint="NAME"
             android:imeOptions="actionDone"
-            android:inputType="textPassword" />
+             />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:hint="FCM TOKEN"
             android:imeOptions="actionDone"
-            android:inputType="textPassword" />
+             />
 
     </com.google.android.material.textfield.TextInputLayout>
 </LinearLayout>
