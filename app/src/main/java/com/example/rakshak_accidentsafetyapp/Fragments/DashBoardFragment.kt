@@ -47,6 +47,7 @@ class DashBoardFragment : Fragment() {
     private lateinit var trackAdapter:TrackAdapter
 
     private lateinit var copy: ImageView
+    private lateinit var empty: ImageView
     private lateinit var token: TextView
     private var dbRef = FirebaseDatabase.getInstance().getReference("Users")
     private var mauth= FirebaseAuth.getInstance()
@@ -89,12 +90,14 @@ class DashBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        trackRecyclerView = view.findViewById(R.id.trackList)
         trackAdapter= TrackAdapter(requireContext(),trackList)
         toggleService = view.findViewById<SwitchMaterial>(R.id.toggleService)
         addPersonButton = view.findViewById(R.id.addPerson)
         copy = view.findViewById(R.id.copy)
         token = view.findViewById(R.id.tokenText)
+        empty=view.findViewById(R.id.emptyPic)
+
 
         copy.setOnClickListener {
             val clipboard: ClipboardManager? =
@@ -111,7 +114,16 @@ class DashBoardFragment : Fragment() {
             }
         }
 
-        trackRecyclerView = view.findViewById(R.id.trackList)
+        if(trackList.isEmpty()) {
+            empty.visibility = View.VISIBLE
+            trackRecyclerView.visibility=View.GONE
+        }
+        else
+        {
+            empty.visibility =View.GONE
+            trackRecyclerView.visibility= View.VISIBLE
+        }
+
         trackRecyclerView.adapter=trackAdapter
         trackRecyclerView.layoutManager=LinearLayoutManager(context)
         trackAdapter.updateList(trackList)
@@ -161,6 +173,15 @@ class DashBoardFragment : Fragment() {
                 trackAdapter.updateList(trackList)
                 userData.trackList.clear()
                 userData.trackList.addAll(trackList)
+                if(trackList.isEmpty()) {
+                    empty.visibility = View.VISIBLE
+                    trackRecyclerView.visibility=View.GONE
+                }
+                else
+                {
+                    empty.visibility =View.GONE
+                    trackRecyclerView.visibility= View.VISIBLE
+                }
                 dbRef.child(uid).setValue(userData)
                     .addOnCompleteListener {
                         Log.i("dbCheck","track-list updated")

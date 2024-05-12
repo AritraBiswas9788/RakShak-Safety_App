@@ -36,6 +36,7 @@ android {
     }
     buildFeatures {
         mlModelBinding = true
+        viewBinding = true
     }
 }
 
@@ -166,6 +167,9 @@ dependencies {
     implementation("com.mapbox.maps:android:10.16.0")
     implementation ("com.mapbox.search:discover:1.2.0")
     implementation("com.google.ai.client.generativeai:generativeai:0.4.0")
+
+    implementation ("com.mapbox.navigation:android:2.10.1")
+    implementation ("com.mapbox.navigation:ui-dropin:2.10.1")
 
     implementation ("com.firebase:geofire-android:3.2.0")
 

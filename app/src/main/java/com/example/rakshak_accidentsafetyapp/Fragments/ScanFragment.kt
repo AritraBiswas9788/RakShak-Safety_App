@@ -125,9 +125,6 @@ class ScanFragment : Fragment() {
 
             }
         }
-
-
-
     }
     fun startSpeech(text:String)
     {
