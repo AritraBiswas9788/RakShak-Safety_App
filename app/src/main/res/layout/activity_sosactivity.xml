@@ -7,6 +7,48 @@
     android:background="@drawable/sos_bg"
     tools:context=".Activity.SOSActivity">
 
+    <!--        app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/shapeableImageView"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/shapeableImageView"-->
+<!--        app:layout_constraintTop_toTopOf="@+id/shapeableImageView" />-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help is on the way!"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/shapeableImageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="SOS"
+        android:elevation="50dp"
+        android:forceHasOverlappingRendering="true"
+        android:textColor="@color/red"
+        android:textSize="35dp"
+
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/shapeableImageView"
+        app:layout_constraintEnd_toEndOf="@+id/shapeableImageView"
+        app:layout_constraintStart_toStartOf="@+id/shapeableImageView"
+        app:layout_constraintTop_toTopOf="@+id/shapeableImageView" />
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/shapeableImageView"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:src="@drawable/baseline_circle_24"
+        app:circularflow_radiusInDP="10dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

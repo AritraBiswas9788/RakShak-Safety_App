@@ -134,7 +134,7 @@ dependencies {
     implementation("org.tensorflow:tensorflow-lite-support:0.1.0")
     implementation("org.tensorflow:tensorflow-lite-metadata:0.1.0")
     implementation("org.tensorflow:tensorflow-lite-gpu:2.3.0")
-    implementation("com.google.firebase:firebase-messaging-ktx:24.0.0")
+    implementation("com.google.firebase:firebase-messaging:24.0.0")
     implementation("com.google.firebase:firebase-storage-ktx:21.0.0")
     testImplementation("junit:junit:4.13.2")
 
@@ -152,7 +152,8 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-inappmessaging-display")
+//    implementation("com.google.firebase:firebase-inappmessaging-display")
+
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-storage")
 
