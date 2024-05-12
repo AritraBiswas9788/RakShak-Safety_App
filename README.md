@@ -32,4 +32,11 @@ The person can scan the injured person’s body to  detect any injuries that can
 The video feed is passed to a body-landmark detection model which detects all the major landmarks on a human body. Based on this we crop the frames up into it’s various body parts and pass these individual cropped images into an image detection model. This returns any major injuries that can be found. 
 The app then provides the information back to the user with an AR overlay with possible quick treatments and gives voice directions.
 The responders are also provided a chatbot based interaction to ask for doubts regarding administration of first-aid.
+# Market Adaptability
+
+* Universal Need: Road accidents are a global problem, making the app relevant in most countries.
+*Smartphone Penetration: With smartphone usage reaching high levels worldwide, the app can reach a large user base without requiring additional hardware.
+*Focus on Bystanders: The app empowers everyday people, not just medical professionals, to make a difference in emergencies.
+*Scalability: The app can be easily adapted to different regions by integrating with local emergency services, blood bank networks, and hospital databases.
+
 
