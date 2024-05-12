@@ -35,8 +35,8 @@ The responders are also provided a chatbot based interaction to ask for doubts r
 # Market Adaptability
 
 * Universal Need: Road accidents are a global problem, making the app relevant in most countries.
-*Smartphone Penetration: With smartphone usage reaching high levels worldwide, the app can reach a large user base without requiring additional hardware.
-*Focus on Bystanders: The app empowers everyday people, not just medical professionals, to make a difference in emergencies.
-*Scalability: The app can be easily adapted to different regions by integrating with local emergency services, blood bank networks, and hospital databases.
+* Smartphone Penetration: With smartphone usage reaching high levels worldwide, the app can reach a large user base without requiring additional hardware.
+* Focus on Bystanders: The app empowers everyday people, not just medical professionals, to make a difference in emergencies.
+* Scalability: The app can be easily adapted to different regions by integrating with local emergency services, blood bank networks, and hospital databases.
 
 
