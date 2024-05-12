@@ -93,10 +93,10 @@ class SignUpActivity : AppCompatActivity() {
         address = findViewById(R.id.editTextAddress)
         mdatabaseref = FirebaseDatabase.getInstance().getReference("Users")
         imageView = findViewById(R.id.uploadPic)
-       ref=FirebaseDatabase.getInstance().getReference("Users")
+         ref=FirebaseDatabase.getInstance().getReference("Users")
 
 
-         imageView.setOnClickListener {
+          imageView.setOnClickListener {
             pickMultipleMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
         button.setOnClickListener {
