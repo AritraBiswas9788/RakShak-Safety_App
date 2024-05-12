@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.rakshak_accidentsafetyapp.Activity.TurnByTurnExperienceActivity
 import com.example.rakshak_accidentsafetyapp.Adapters.ContactAdapter
 import com.example.rakshak_accidentsafetyapp.Adapters.HospitalAdapter
 import com.example.rakshak_accidentsafetyapp.DataClasses.Contact
@@ -51,6 +52,7 @@ class ActionsFragment : Fragment() {
     private lateinit var contactAdapter:ContactAdapter
     private lateinit var contactBtn:ImageView
     private lateinit var empty:ImageView
+    private lateinit var hospbtn:ImageView
 
     private lateinit var hospitalRecView:RecyclerView
     var numList = arrayListOf<Contact>()
@@ -107,10 +109,16 @@ class ActionsFragment : Fragment() {
         hospitalRecView=view.findViewById(R.id.hospitalList)
         contactList=view.findViewById(R.id.contactList)
         contactBtn=view.findViewById(R.id.contactbtn)
+        hospbtn=view.findViewById(R.id.hospbtn)
         contactAdapter= ContactAdapter(requireContext(),numList)
         contactList.adapter=contactAdapter
         contactList.layoutManager=LinearLayoutManager(context)
         empty=view.findViewById(R.id.empty)
+        hospbtn.setOnClickListener {
+            val intent=Intent(requireContext(),TurnByTurnExperienceActivity::class.java)
+
+            requireContext().startActivity(intent)
+        }
         getNearbyPOIs()
         if(numList.isEmpty()) {
             empty.visibility = View.VISIBLE

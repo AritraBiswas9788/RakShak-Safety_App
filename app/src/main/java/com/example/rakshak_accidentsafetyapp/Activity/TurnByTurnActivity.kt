@@ -1,14 +1,23 @@
 package com.example.rakshak_accidentsafetyapp.Activity
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.airbnb.lottie.LottieAnimationView
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.bindgen.Expected
@@ -75,6 +84,12 @@ import java.util.Date
 import java.util.Locale
 import com.example.rakshak_accidentsafetyapp.R
 import com.example.rakshak_accidentsafetyapp.databinding.ActivityTurnByTurnBinding
+import com.mapbox.android.gestures.MoveGestureDetector
+import com.mapbox.maps.CameraOptions
+import com.mapbox.maps.extension.style.expressions.dsl.generated.interpolate
+import com.mapbox.maps.plugin.gestures.OnMoveListener
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorBearingChangedListener
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 
 @OptIn(ExperimentalPreviewMapboxNavigationAPI::class)
 class TurnByTurnExperienceActivity : AppCompatActivity() {
@@ -113,6 +128,8 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
      * Produces the camera frames based on the location and routing data for the [navigationCamera] to execute.
      */
     private lateinit var viewportDataSource: MapboxNavigationViewportDataSource
+
+    private lateinit var lottieLoader:LottieAnimationView
 
     /*
      * Below are generated camera padding values to ensure that the route fits well on screen while
@@ -408,6 +425,8 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
         binding = ActivityTurnByTurnBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+
         // initialize Navigation Camera
         viewportDataSource = MapboxNavigationViewportDataSource(binding.mapView.getMapboxMap())
         navigationCamera = NavigationCamera(
@@ -468,6 +487,7 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
                 .build()
         )
 
+
         // initialize voice instructions api and the voice instruction player
         speechApi = MapboxSpeechApi(
             this,
@@ -494,13 +514,17 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
         val routeArrowOptions = RouteArrowOptions.Builder(this).build()
         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
+        initLocationComponent()
         // load map style
         binding.mapView.getMapboxMap().loadStyleUri(NavigationStyles.NAVIGATION_DAY_STYLE) {
             // add long click listener that search for a route to the clicked destination
-            binding.mapView.gestures.addOnMapLongClickListener { point ->
+            /*binding.mapView.gestures.addOnMapLongClickListener { point ->
                 findRoute(point)
                 true
-            }
+            }*/
+            val lat = intent.getDoubleExtra("lat",0.0)!!
+            val long = intent.getDoubleExtra("long",0.0)!!
+            findRoute(Point.fromLngLat(long,lat))
         }
 
         // initialize view interactions
@@ -559,63 +583,113 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
     }
 
     private fun replayOriginLocation() {
-        mapboxReplayer.pushEvents(
-            listOf(
-                ReplayRouteMapper.mapToUpdateLocation(
-                    Date().time.toDouble(),
-                    Point.fromLngLat(-122.39726512303575, 37.785128345296805)
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.e("mapCheck", "Permission-failed")
+        }
+        val locationListener = LocationListener { location ->
+
+
+            mapboxReplayer.pushEvents(
+                listOf(
+                    ReplayRouteMapper.mapToUpdateLocation(
+                        Date().time.toDouble(),
+                        Point.fromLngLat(location.longitude, location.latitude)
+                    )
                 )
             )
+        }
+        locationManager.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            500,
+            0f,
+            locationListener
         )
         mapboxReplayer.playFirstLocation()
         mapboxReplayer.playbackSpeed(3.0)
     }
 
     private fun findRoute(destination: Point) {
-        val originLocation = navigationLocationProvider.lastLocation
+        /*val originLocation = navigationLocationProvider.lastLocation
         val originPoint = originLocation?.let {
             Point.fromLngLat(it.longitude, it.latitude)
-        } ?: return
+        } ?: return*/
 
-        // execute a route request
-        // it's recommended to use the
-        // applyDefaultNavigationOptions and applyLanguageAndVoiceUnitOptions
-        // that make sure the route request is optimized
-        // to allow for support of all of the Navigation SDK features
-        mapboxNavigation.requestRoutes(
-            RouteOptions.builder()
-                .applyDefaultNavigationOptions()
-                .applyLanguageAndVoiceUnitOptions(this)
-                .coordinatesList(listOf(originPoint, destination))
-                // provide the bearing for the origin of the request to ensure
-                // that the returned route faces in the direction of the current user movement
-                .bearingsList(
-                    listOf(
-                        Bearing.builder()
-                            .angle(originLocation.bearing.toDouble())
-                            .degrees(45.0)
-                            .build(),
-                        null
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Log.e("mapCheck", "Permission-failed")
+        }
+        val locationListener = LocationListener { location ->
+
+            val originPoint = Point.fromLngLat(location.longitude, location.latitude)
+            val originLocation = location
+            // execute a route request
+            // it's recommended to use the
+            // applyDefaultNavigationOptions and applyLanguageAndVoiceUnitOptions
+            // that make sure the route request is optimized
+            // to allow for support of all of the Navigation SDK features
+            mapboxNavigation.requestRoutes(
+                RouteOptions.builder()
+                    .applyDefaultNavigationOptions()
+                    .applyLanguageAndVoiceUnitOptions(this)
+                    .coordinatesList(listOf(originPoint, destination))
+                    // provide the bearing for the origin of the request to ensure
+                    // that the returned route faces in the direction of the current user movement
+                    .bearingsList(
+                        listOf(
+                            Bearing.builder()
+                                .angle(originLocation.bearing.toDouble())
+                                .degrees(45.0)
+                                .build(),
+                            null
+                        )
                     )
-                )
-                .layersList(listOf(mapboxNavigation.getZLevel(), null))
-                .build(),
-            object : NavigationRouterCallback {
-                override fun onCanceled(routeOptions: RouteOptions, routerOrigin: RouterOrigin) {
-                    // no impl
-                }
+                    .layersList(listOf(mapboxNavigation.getZLevel(), null))
+                    .build(),
+                object : NavigationRouterCallback {
+                    override fun onCanceled(
+                        routeOptions: RouteOptions,
+                        routerOrigin: RouterOrigin
+                    ) {
+                        // no impl
+                    }
 
-                override fun onFailure(reasons: List<RouterFailure>, routeOptions: RouteOptions) {
-                    // no impl
-                }
+                    override fun onFailure(
+                        reasons: List<RouterFailure>,
+                        routeOptions: RouteOptions
+                    ) {
+                        // no impl
+                    }
 
-                override fun onRoutesReady(
-                    routes: List<NavigationRoute>,
-                    routerOrigin: RouterOrigin
-                ) {
-                    setRouteAndStartNavigation(routes)
+                    override fun onRoutesReady(
+                        routes: List<NavigationRoute>,
+                        routerOrigin: RouterOrigin
+                    ) {
+                        binding.loader.visibility=View.GONE
+                        setRouteAndStartNavigation(routes)
+                    }
                 }
-            }
+            )
+        }
+        locationManager.requestLocationUpdates(
+            LocationManager.NETWORK_PROVIDER,
+            500,
+            0f,
+            locationListener
         )
     }
 
@@ -646,4 +720,74 @@ class TurnByTurnExperienceActivity : AppCompatActivity() {
         binding.routeOverview.visibility = View.INVISIBLE
         binding.tripProgressCard.visibility = View.INVISIBLE
     }
+
+    private fun initLocationComponent() {
+        val locationComponentPlugin = binding.mapView.location
+        locationComponentPlugin.updateSettings {
+            this.enabled = true
+            this.locationPuck = LocationPuck2D(
+                bearingImage = AppCompatResources.getDrawable(
+                    this@TurnByTurnExperienceActivity,
+                    R.drawable.circleicon,
+                ),
+                shadowImage = AppCompatResources.getDrawable(
+                    this@TurnByTurnExperienceActivity,
+                    R.drawable.circleicon,
+                ),
+                scaleExpression = interpolate {
+                    linear()
+                    zoom()
+                    stop {
+                        literal(0.0)
+                        literal(0.6)
+                    }
+                    stop {
+                        literal(20.0)
+                        literal(1.0)
+                    }
+                }.toJson()
+            )
+            onCameraTrackingDismissed()
+        }
+        locationComponentPlugin.addOnIndicatorPositionChangedListener(
+            onIndicatorPositionChangedListener
+        )
+        locationComponentPlugin.addOnIndicatorBearingChangedListener(
+            onIndicatorBearingChangedListener
+        )
+    }
+
+    private val onIndicatorBearingChangedListener = OnIndicatorBearingChangedListener {
+        binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().bearing(it).build())
+    }
+
+    private val onIndicatorPositionChangedListener = OnIndicatorPositionChangedListener {
+        binding.mapView.getMapboxMap().setCamera(CameraOptions.Builder().center(it).build())
+        binding.mapView.gestures.focalPoint = binding.mapView.getMapboxMap().pixelForCoordinate(it)
+    }
+    private val onMoveListener = object : OnMoveListener {
+        override fun onMoveBegin(detector: MoveGestureDetector) {
+            onCameraTrackingDismissed()
+        }
+
+        override fun onMove(detector: MoveGestureDetector): Boolean {
+        return false
+        }
+
+        override fun onMoveEnd(detector: MoveGestureDetector) {}
+    }
+    private fun onCameraTrackingDismissed() {
+        Toast.makeText(this, "onCameraTrackingDismissed", Toast.LENGTH_SHORT).show()
+        binding.mapView.location
+            .removeOnIndicatorPositionChangedListener(onIndicatorPositionChangedListener)
+        binding.mapView.location
+            .removeOnIndicatorBearingChangedListener(onIndicatorBearingChangedListener)
+        binding.mapView.gestures.removeOnMoveListener(onMoveListener)
+    }
+
+    private fun setupGesturesListener() {
+        binding.mapView.gestures.addOnMoveListener(onMoveListener)
+    }
+
+
 }

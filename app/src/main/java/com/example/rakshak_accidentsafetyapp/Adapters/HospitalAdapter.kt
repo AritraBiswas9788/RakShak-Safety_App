@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.bumptech.glide.Glide
 import com.example.rakshak_accidentsafetyapp.Activity.LocationPointActivity
+import com.example.rakshak_accidentsafetyapp.Activity.TurnByTurnExperienceActivity
 import com.example.rakshak_accidentsafetyapp.DataClasses.TrackItem
 import com.example.rakshak_accidentsafetyapp.R
 import com.mapbox.search.discover.DiscoverResult
@@ -46,6 +47,13 @@ class HospitalAdapter(val context: Context, var list: ArrayList<DiscoverResult>)
         viewholder.name.text=hosp.name
         viewholder.lat.text=hosp.coordinate.latitude().toString()
         viewholder.long.text=hosp.coordinate.longitude().toString()
+        viewholder.name.setOnClickListener {
+            val intent=Intent(context, TurnByTurnExperienceActivity::class.java)
+            intent.putExtra("lat",hosp.coordinate.latitude())
+            intent.putExtra("long",hosp.coordinate.longitude())
+            context.startActivity(intent)
+        }
+
     }
 
 
