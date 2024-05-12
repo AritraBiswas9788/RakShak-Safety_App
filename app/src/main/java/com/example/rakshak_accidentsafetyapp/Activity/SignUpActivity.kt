@@ -29,6 +29,8 @@ import com.example.rakshak_accidentsafetyapp.DataClasses.GeoFireInfo
 import com.example.rakshak_accidentsafetyapp.DataClasses.Location
 import com.example.rakshak_accidentsafetyapp.R
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
+import com.example.rakshak_accidentsafetyapp.Notification.MyFirebaseMessagingService
+import com.example.rakshak_accidentsafetyapp.Notification.MyFirebaseMessagingService.Companion.token
 import com.firebase.geofire.GeoFire
 import com.firebase.geofire.GeoLocation
 import com.google.android.gms.tasks.OnCompleteListener
@@ -39,13 +41,17 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.iid.internal.FirebaseInstanceIdInternal
 import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.storage
 import java.io.ByteArrayOutputStream
 import java.util.UUID
 
+
 class SignUpActivity : AppCompatActivity() {
+   val TOPIC1= "topics/myTopic"
     private lateinit var mdatabaseref: DatabaseReference
     private lateinit var mauth: FirebaseAuth
     private lateinit var name: EditText
@@ -85,6 +91,8 @@ class SignUpActivity : AppCompatActivity() {
             (arrayOf(android.Manifest.permission.CAMERA, android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.MANAGE_EXTERNAL_STORAGE,android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION,android.Manifest.permission.CAMERA)),
             PackageManager.PERMISSION_GRANTED
         )
+
+
         name = findViewById(R.id.editTextname)
         email = findViewById(R.id.editTextTextEmailAddress)
         password = findViewById(R.id.editTextTextPassword)
@@ -102,6 +110,12 @@ class SignUpActivity : AppCompatActivity() {
         button.setOnClickListener {
             registeruser()
         }
+
+            FirebaseMessaging.getInstance().token.addOnSuccessListener{
+                MyFirebaseMessagingService.token =it.toString()
+            }
+
+        FirebaseMessaging.getInstance().subscribeToTopic(Topic1)
     }
 
     @RequiresApi(Build.VERSION_CODES.P)
@@ -135,7 +149,7 @@ class SignUpActivity : AppCompatActivity() {
                                 }
                                 // Get new FCM registration token
                                 val token = task.result.toString()
-
+                                 FirebaseMessaging.getInstance().subscribeToTopic(TOPIC1)
                                 val fileName = UUID.randomUUID().toString()
                                 val ImagesRef =
                                     storageRef.child("images/$fileName.jpg")

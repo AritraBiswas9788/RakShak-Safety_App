@@ -4,13 +4,16 @@ import android.Manifest
 import android.content.ContentValues
 import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
+import com.example.rakshak_accidentsafetyapp.Notification.MyFirebaseMessagingService
 import com.example.rakshak_accidentsafetyapp.Notification.Notificationdata
 import com.example.rakshak_accidentsafetyapp.Notification.PushNotification
 import com.example.rakshak_accidentsafetyapp.Notification.RetrofitInstance
@@ -25,24 +28,56 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val Topic1="topics/myTopic"
 
 class SOSActivity : AppCompatActivity() {
     private lateinit var ref: DatabaseReference
     private lateinit var mauth: FirebaseAuth
-
+ private lateinit var btn:Button
     private lateinit var dbref:DatabaseReference
-    private lateinit var currentLocation: com.example.rakshak_accidentsafetyapp.DataClasses.Location
+//    private lateinit var currentLocation: com.example.rakshak_accidentsafetyapp.DataClasses.Location
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sosactivity)
-        mauth = FirebaseAuth.getInstance()
-        ref = FirebaseDatabase.getInstance().getReference("Users").child(mauth.currentUser!!.uid)
-        dbref=FirebaseDatabase.getInstance().getReference("Users")
-        sendnotity()
+//        mauth = FirebaseAuth.getInstance()
+//        ref = FirebaseDatabase.getInstance().getReference("Users").child(mauth.currentUser!!.uid)
+//        dbref=FirebaseDatabase.getInstance().getReference("Users")
+
+    //sendnotity()
+
+//        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+//        if (ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_FINE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+//                this,
+//                Manifest.permission.ACCESS_COARSE_LOCATION
+//            ) != PackageManager.PERMISSION_GRANTED
+//        ) {
+//
+//        }
+//        FirebaseMessaging.getInstance().token.addOnSuccessListener{
+//            MyFirebaseMessagingService.token =it.toString()
+//        }
+        FirebaseMessaging.getInstance().subscribeToTopic(Topic1)
+//     val btn:Button=findViewById<Button>(R.id.btn)
+////    btn.setOnClickListener {
+//         PushNotification(Notificationdata("Accident Happened", "Accident Happened at location lt &lg "),Topic1)
+//            .also { it ->
+//                sendNotification(it)
+//            }
+////    }
+//    btn.setOnClickListener{
+//        PushNotification(Notificationdata("Accident Happened", "Accident Happened at location lt &lg "),Topic1)
+//            .also { it ->
+//                sendNotification(it)
+//            }
+//    }
 
 
 
@@ -62,7 +97,7 @@ class SOSActivity : AppCompatActivity() {
         }
 
         val locationListener = LocationListener { location ->
-            currentLocation =com.example.rakshak_accidentsafetyapp.DataClasses.Location(location.latitude,location.longitude)
+
             var flag =true
             dbref.addValueEventListener( object : ValueEventListener {
 
@@ -110,6 +145,7 @@ class SOSActivity : AppCompatActivity() {
                         }
 
                         }
+
 
                         flag=false
 
