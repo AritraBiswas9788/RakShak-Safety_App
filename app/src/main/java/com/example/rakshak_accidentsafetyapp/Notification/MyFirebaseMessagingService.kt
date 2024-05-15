@@ -11,6 +11,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.rakshak_accidentsafetyapp.Activity.MainActivity
+import com.example.rakshak_accidentsafetyapp.Activity.TurnByTurnExperienceActivity
 import com.example.rakshak_accidentsafetyapp.R
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -40,7 +41,13 @@ class MyFirebaseMessagingService: FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        val intent= Intent(this, MainActivity::class.java)
+        val lat:Double = message.data["lat"]!!.toDouble()
+        val long:Double = message.data["long"]!!.toDouble()
+
+
+        val intent= Intent(this,TurnByTurnExperienceActivity::class.java)
+        intent.putExtra("lat",lat)
+        intent.putExtra("long",long)
         val notificationManager=getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationid = Random.nextInt()
 

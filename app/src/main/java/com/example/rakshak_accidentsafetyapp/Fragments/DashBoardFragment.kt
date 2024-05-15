@@ -55,23 +55,35 @@ class DashBoardFragment : Fragment() {
     private var userData = User()
 
     init {
+            loadTrackData()
+    }
+
+    private fun loadTrackData() {
         val uid = mauth.currentUser!!.uid
         dbRef.child(uid).get().addOnSuccessListener { snap ->
             val user = snap.getValue(User::class.java)
             if (user != null) {
-                userData=user
+                userData = user
             }
-            Log.i("dbcheck",user.toString())
+            Log.i("dbcheck", user.toString())
             trackList.clear()
             trackList.addAll(user!!.trackList)
-            trackAdapter?.updateList(trackList)
-            Log.i("busCheck",trackList.size.toString())
-            token.text=user.uid
-
-
+            if(trackList.isEmpty()) {
+                empty.visibility = View.VISIBLE
+                trackRecyclerView.visibility=View.GONE
+            }
+            else
+            {
+                empty.visibility =View.GONE
+                trackRecyclerView.visibility= View.VISIBLE
+            }
+            Log.i("db1check", user!!.trackList.size.toString())
+            trackAdapter.updateList(trackList)
+            Log.i("busCheck", trackList.size.toString())
+            token.text = user.uid
         }
-
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -127,13 +139,13 @@ class DashBoardFragment : Fragment() {
         trackRecyclerView.adapter=trackAdapter
         trackRecyclerView.layoutManager=LinearLayoutManager(context)
         trackAdapter.updateList(trackList)
+        loadTrackData()
     }
 
     private fun addPersonDialog() {
         val builder = AlertDialog.Builder(
             requireContext()
         )
-
         val viewInflated: View = LayoutInflater.from(context)
             .inflate(R.layout.add_person_dialog, view as ViewGroup?, false)
         val name = viewInflated.findViewById<View>(R.id.inputName) as EditText

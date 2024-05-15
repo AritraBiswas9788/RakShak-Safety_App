@@ -8,10 +8,12 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.rakshak_accidentsafetyapp.DataClasses.Contact
 import com.example.rakshak_accidentsafetyapp.DataClasses.User
 import com.example.rakshak_accidentsafetyapp.Notification.MyFirebaseMessagingService
 import com.example.rakshak_accidentsafetyapp.Notification.Notificationdata
@@ -40,15 +42,53 @@ class SOSActivity : AppCompatActivity() {
     private lateinit var mauth: FirebaseAuth
  private lateinit var btn:Button
     private lateinit var dbref:DatabaseReference
-//    private lateinit var currentLocation: com.example.rakshak_accidentsafetyapp.DataClasses.Location
+
+    private lateinit var listener:ValueEventListener
+    private fun sendNotifications(contactList: ArrayList<Contact>) {
+
+        for(contact in contactList)
+        {
+            var message =
+                "Hello! I am currently in danger at "
+            val uid = mauth.currentUser!!.uid
+            dbref.child(uid).get().addOnSuccessListener { snap ->
+                val user = snap.getValue(User::class.java)
+                message += "latitude ${user?.geoFireInfo?.l?.get(1)} and longitude ${
+                    user?.geoFireInfo?.l?.get(
+                        0
+                    )
+                }. Please send help."
+
+                Log.i("smscheck",message)
+
+                val mysmsmanager = getSystemService(SmsManager::class.java)
+                mysmsmanager.sendTextMessage(contact.phno, null, message, null, null)
+            }.addOnFailureListener {
+                Log.e("smscheck",it.toString())
+            }
+        }
+
+    }
+
+    //    private lateinit var currentLocation: com.example.rakshak_accidentsafetyapp.DataClasses.Location
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sosactivity)
-//        mauth = FirebaseAuth.getInstance()
-//        ref = FirebaseDatabase.getInstance().getReference("Users").child(mauth.currentUser!!.uid)
-//        dbref=FirebaseDatabase.getInstance().getReference("Users")
 
-    //sendnotity()
+
+
+        mauth = FirebaseAuth.getInstance()
+        ref = FirebaseDatabase.getInstance().getReference("Users")
+        dbref=FirebaseDatabase.getInstance().getReference("Users")
+
+    dbref.child(mauth.currentUser!!.uid).get().addOnSuccessListener { snap ->
+        val user = snap.getValue(User::class.java)
+        if (user != null) {
+            sendNotifications(user.contactList)
+        }
+    }
+
+        //sendnotity()
 
 //        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 //        if (ActivityCompat.checkSelfPermission(
@@ -65,6 +105,8 @@ class SOSActivity : AppCompatActivity() {
 //            MyFirebaseMessagingService.token =it.toString()
 //        }
         FirebaseMessaging.getInstance().subscribeToTopic(Topic1)
+        sendnotity()
+
 //     val btn:Button=findViewById<Button>(R.id.btn)
 ////    btn.setOnClickListener {
 //         PushNotification(Notificationdata("Accident Happened", "Accident Happened at location lt &lg "),Topic1)
@@ -78,8 +120,6 @@ class SOSActivity : AppCompatActivity() {
 //                sendNotification(it)
 //            }
 //    }
-
-
 
 
     }
@@ -99,7 +139,7 @@ class SOSActivity : AppCompatActivity() {
         val locationListener = LocationListener { location ->
 
             var flag =true
-            dbref.addValueEventListener( object : ValueEventListener {
+            listener = dbref.addValueEventListener( object : ValueEventListener {
 
 
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -128,7 +168,7 @@ class SOSActivity : AppCompatActivity() {
                                     PushNotification(
                                         Notificationdata(
                                             "Accident detected in your location",
-                                            "there is an accident occur at this location of latitude${lat} and longitude${lg},  they might need your urgent help"
+                                            "there is an accident occur at this location of latitude${lat} and longitude${lg},  they might need your urgent help",lat.toString(),lg.toString()
                                         ), users.fcmtoken
                                     )
                                         .also { it ->
@@ -150,6 +190,8 @@ class SOSActivity : AppCompatActivity() {
                         flag=false
 
                     }
+
+                    removeListener()
 
 
 
@@ -175,6 +217,10 @@ class SOSActivity : AppCompatActivity() {
             0f,
             locationListener
         )
+    }
+
+    private fun removeListener() {
+        dbref.removeEventListener(listener)
     }
 
     private fun sendNotification(notification: PushNotification)= CoroutineScope(Dispatchers.IO).launch {
